@@ -1,43 +1,17 @@
-#include <stdio.h>
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <xutility>
+#include <SFML/Graphics.hpp>
+#include "EditorWorld.h"
 
-template <typename T, int N>
-class Array 
+int main()
 {
-public:
-	int getSize() const 
-	{
-		return N;
+	std::unique_ptr<ToolsUI::EditorWorld> editor = std::make_unique<ToolsUI::EditorWorld>();
+
+	editor->start();
+	while (editor->gameRunning() == true) {
+		editor->eventHandler();
+		editor->update();
+		editor->render();
 	}
-private:
-	T elem[N];
-};
-
-struct Man
-{
-	const char* name;
-	int age;
-};
-
-int main(int argc, char* argv[])
-{
-	std::vector<int> vec = { 1,2,3,4,5,6,7,8,9 };
-	std::vector<std::string> str = { "Programming", "in", "a", "functional", "style." };
-
-	std::transform(vec.begin(), vec.end(), vec.begin(), [](int i) {return i * i; });
-
-	//auto it = std::remove_if(vec.begin(), vec.end(), [](int i) { return ((i < 3) or (i > 8)); }); // {3,4,5,6,7,8}
-	auto it2 = std::remove_if(str.begin(), str.end(), [](std::string s) { return (s[0]); });
-
-	//auto deref = *it;
-
-	for (size_t i = 0; i < vec.size(); i++)
-	{
-		std::cout << vec[i] << std::endl;
-	}
+	editor->quit();
 
 	return 0;
 }
