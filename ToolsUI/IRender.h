@@ -1,10 +1,10 @@
 #pragma once
 
-namespace ToolsUI 
+namespace universal 
 {
 	class IRender 
 	{
 	public:
-		virtual void render() = 0;
+		virtual void render(sf::RenderWindow* window) = 0;
 	};
 }

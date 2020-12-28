@@ -3,7 +3,7 @@
 
 int main()
 {
-	std::unique_ptr<ToolsUI::EditorWorld> editor = std::make_unique<ToolsUI::EditorWorld>();
+	std::unique_ptr<universal::EditorWorld> editor = std::make_unique<universal::EditorWorld>();
 
 	editor->start();
 	while (editor->gameRunning() == true) {

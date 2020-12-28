@@ -6,14 +6,18 @@
 #include "IUpdate.h"
 #include "IRender.h"
 #include "IQuit.h"
+#include "Rectangle.h"
 
-namespace ToolsUI
+namespace universal
 {
-	class EditorWorld : public IStart, public IEventHandler, public IUpdate, public IRender, public IQuit
+	class EditorWorld
 	{
 	private:
 		std::unique_ptr<sf::RenderWindow> m_window = nullptr;
-		std::unique_ptr<sf::CircleShape> m_circle = nullptr;
+		std::unique_ptr<world::Rectangle> m_rectangle = nullptr;
+
+		std::vector<std::unique_ptr<world::WorldObject>> worldObjects;
+		std::unique_ptr<world::WorldObject> m_currentSelection = nullptr;
 
 		sf::Event m_event;
 		bool m_gameRunning = false;
@@ -21,12 +25,13 @@ namespace ToolsUI
 	public:
 		EditorWorld();
 
-		void start() override;
-		void eventHandler() override;
-		void update() override;
-		void render() override;
-		void quit() override;
+		void start();
+		void eventHandler();
+		void update();
+		void render();
+		void quit();
 
 		const bool gameRunning() const { return m_gameRunning; }
+		const sf::Vector2i mousePosWindowSpace();
 	};
 }

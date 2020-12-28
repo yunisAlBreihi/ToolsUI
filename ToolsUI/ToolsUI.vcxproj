@@ -147,16 +147,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="EditorWorld.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="EditorWorld.h" />
     <ClInclude Include="IEventHandler.h" />
     <ClInclude Include="IQuit.h" />
     <ClInclude Include="IRender.h" />
     <ClInclude Include="IStart.h" />
     <ClInclude Include="IUpdate.h" />
+    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="WorldObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
