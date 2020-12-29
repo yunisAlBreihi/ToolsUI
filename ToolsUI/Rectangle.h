@@ -3,27 +3,21 @@
 #include <SFML/Graphics.hpp>
 #include "WorldObject.h"
 #include "IRender.h"
-#include "BoxCollider.h"
+#include "RectBounds.h"
 
 namespace world 
 {
-	class Rectangle : public WorldObject, public universal::IRender
+	class Rectangle : public WorldObject
 	{
 	private:
 		std::unique_ptr<sf::RectangleShape> m_shape = nullptr;
-		std::unique_ptr<universal::BoxCollider> m_collider = nullptr;
 
 	public:
-		Rectangle(const sf::Vector2f& size, sf::Color color);
+		Rectangle(const sf::Color& color, const sf::Vector2f& position = sf::Vector2f(0,0), const sf::Vector2f& size = sf::Vector2f(0,0));
 
 		void render(sf::RenderWindow* window) override;
 
-		const WorldObject* collidingWithPosition(const sf::Vector2f& position);
-		const WorldObject* collidingWithPosition(const sf::Vector2i& position);
-
-		void setPosition(const sf::Vector2f& position);
-		void setSize(const sf::Vector2f& size);
-		const sf::Vector2f& getPosition();
-		const sf::Vector2f& getSize();
+		void setPosition(const sf::Vector2f& position) override;
+		void setSize(const sf::Vector2f& size) override;
 	};
 }

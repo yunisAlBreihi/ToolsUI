@@ -2,18 +2,20 @@
 #include <iostream>
 #include <SFML/Window/Mouse.hpp>
 
-namespace universal
+namespace editor
 {
-	universal::EditorWorld::EditorWorld() {
+	EditorWorld::EditorWorld()
+	{
 		m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1280, 720), "ToolsUI!");
 		m_gameRunning = true;
 	}
 
 	void EditorWorld::start()
 	{
-		//m_rectangle = ;
-		//m_rectangle->setPosition(sf::Vector2f(50,50));
-		worldObjects.emplace_back(std::make_unique<world::Rectangle>(sf::Vector2f(100, 100), sf::Color::Cyan));
+		m_rectangle = std::make_unique<world::Rectangle>(sf::Color::Cyan, sf::Vector2f(0, 0), sf::Vector2f(100, 100));
+		worldObjects.emplace_back(std::move(m_rectangle));
+		m_rectangle = std::make_unique<world::Rectangle>(sf::Color::Cyan, sf::Vector2f(200, 200), sf::Vector2f(100, 100));
+		worldObjects.emplace_back(std::move(m_rectangle));
 	}
 
 	void EditorWorld::eventHandler()
@@ -24,23 +26,29 @@ namespace universal
 				m_gameRunning = false;
 			}
 
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == true)
-			{
-				for(const auto& obj : worldObjects)
-				{
+			//TODO: Make mouse press only once
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == true && m_holdingLMB == false) {
+				m_holdingLMB = true;
+
+				for(auto& obj : worldObjects) {
+					if (m_currentSelection != nullptr) {
+						worldObjects.emplace_back(std::move(m_currentSelection));
+					}
+					if (selectObject(&(*obj))) {
+						m_currentSelection = std::move(obj);
+						break;
+					}
+				}
+
+				if (m_currentSelection != nullptr) 	{
+					if (m_toolWindow == nullptr) {
+						m_toolWindow = std::make_unique<ToolWindow>();
+					}
+					else {
+						m_toolWindow->show();
+					}
 				}
 			}
-		}
-
-		//std::cout << "rectangle pos: " << m_rectangle->getPosition().x << " , " << m_rectangle->getPosition().y << '\n';
-		//std::cout << "mouse pos: " << mousePosWindowSpace().x << " , " << mousePosWindowSpace().y << '\n';
-
-		//sf::Vector2f t_mousePos = sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y);
-
-		
-
-		if (m_rectangle->collidingWithPosition(mousePosWindowSpace())) {
-			std::cout << "mouse colliding" << '\n';
 		}
 	}
 
@@ -54,8 +62,9 @@ namespace universal
 		m_window->clear();
 
 		//Add items to render here
-		//m_window->draw(*(m_rectangle->getShape()));
-		m_rectangle->render(&(*m_window));
+		for (const auto& obj : worldObjects) {
+			obj->render(&(*m_window));
+		}
 
 		m_window->display();
 	}
@@ -70,5 +79,19 @@ namespace universal
 		//the extra 30.0f in "y" is compensate for the the window top ribbon
 		return sf::Vector2i(sf::Mouse::getPosition().x - m_window->getPosition().x,
 							sf::Mouse::getPosition().y - m_window->getPosition().y - 30.0f);
+	}
+
+	const bool EditorWorld::selectObject(world::WorldObject* object)
+	{
+		bool left = mousePosWindowSpace().x > object->getBoundsPosition().x;
+		bool right = mousePosWindowSpace().x < object->getBoundsPosition().x + object->getBoundsSize().x;
+		bool top = mousePosWindowSpace().y > object->getBoundsPosition().y;
+		bool bot = mousePosWindowSpace().y < object->getBoundsPosition().y + object->getBoundsSize().y;
+
+		if (left == true && right == true && top == true && bot == true) {
+			object->setBoundsColor(sf::Color::Green);
+			return true;
+		}
+		return false;
 	}
 }

@@ -7,8 +7,9 @@
 #include "IRender.h"
 #include "IQuit.h"
 #include "Rectangle.h"
+#include "ToolWindow.h"
 
-namespace universal
+namespace editor
 {
 	class EditorWorld
 	{
@@ -19,8 +20,11 @@ namespace universal
 		std::vector<std::unique_ptr<world::WorldObject>> worldObjects;
 		std::unique_ptr<world::WorldObject> m_currentSelection = nullptr;
 
+		std::unique_ptr<ToolWindow> m_toolWindow;
+
 		sf::Event m_event;
 		bool m_gameRunning = false;
+		bool m_holdingLMB = false;
 
 	public:
 		EditorWorld();
@@ -33,5 +37,7 @@ namespace universal
 
 		const bool gameRunning() const { return m_gameRunning; }
 		const sf::Vector2i mousePosWindowSpace();
+
+		const bool selectObject(world::WorldObject* object);
 	};
 }
