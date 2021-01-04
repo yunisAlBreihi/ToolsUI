@@ -13,9 +13,9 @@ namespace editor
 	void EditorWorld::start()
 	{
 		m_rectangle = std::make_unique<world::Rectangle>(sf::Color::Cyan, sf::Vector2f(0, 0), sf::Vector2f(100, 100));
-		worldObjects.emplace_back(std::move(m_rectangle));
+		m_worldObjects.emplace_back(std::move(m_rectangle));
 		m_rectangle = std::make_unique<world::Rectangle>(sf::Color::Cyan, sf::Vector2f(200, 200), sf::Vector2f(100, 100));
-		worldObjects.emplace_back(std::move(m_rectangle));
+		m_worldObjects.emplace_back(std::move(m_rectangle));
 	}
 
 	void EditorWorld::eventHandler()
@@ -28,18 +28,21 @@ namespace editor
 
 			//TODO: Make mouse press only once
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Left) == true && m_holdingLMB == false) {
-				m_holdingLMB = true;
+				//m_holdingLMB = true;
 
-				for(auto& obj : worldObjects) {
-					if (m_currentSelection != nullptr) {
-						worldObjects.emplace_back(std::move(m_currentSelection));
-					}
-					if (selectObject(&(*obj))) {
-						m_currentSelection = std::move(obj);
+				if (m_currentSelection != nullptr) {
+					m_currentSelection->setBoundsColor(sf::Color::Red);
+					m_worldObjects.emplace_back(std::move(m_currentSelection));
+				}
+
+				for (auto obj = m_worldObjects.begin(); obj < m_worldObjects.end(); ++obj) {
+
+					if (selectObject(&(**obj))) {
+						m_currentSelection = std::move(*obj);
+						m_worldObjects.erase(obj);
 						break;
 					}
 				}
-
 				if (m_currentSelection != nullptr) 	{
 					if (m_toolWindow == nullptr) {
 						m_toolWindow = std::make_unique<ToolWindow>();
@@ -49,6 +52,10 @@ namespace editor
 					}
 				}
 			}
+		}
+
+		if (m_toolWindow != nullptr) {
+			m_toolWindow->eventHandler();
 		}
 	}
 
@@ -61,9 +68,17 @@ namespace editor
 	{
 		m_window->clear();
 
-		//Add items to render here
-		for (const auto& obj : worldObjects) {
+		//Add items to render between the window clear and display.
+		for (const auto& obj : m_worldObjects) {
 			obj->render(&(*m_window));
+		}
+
+		if (m_currentSelection != nullptr) {
+			m_currentSelection->render(&(*m_window));
+		}
+
+		if (m_toolWindow != nullptr) {
+			m_toolWindow->render(&(*m_window));
 		}
 
 		m_window->display();

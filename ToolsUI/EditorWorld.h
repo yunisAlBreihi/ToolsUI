@@ -17,7 +17,8 @@ namespace editor
 		std::unique_ptr<sf::RenderWindow> m_window = nullptr;
 		std::unique_ptr<world::Rectangle> m_rectangle = nullptr;
 
-		std::vector<std::unique_ptr<world::WorldObject>> worldObjects;
+		std::vector<std::unique_ptr<world::WorldObject>> m_worldObjects;
+		//std::vector<std::unique_ptr<world::WorldObject>> selectedObjects;
 		std::unique_ptr<world::WorldObject> m_currentSelection = nullptr;
 
 		std::unique_ptr<ToolWindow> m_toolWindow;
